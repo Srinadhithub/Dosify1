@@ -18,10 +18,18 @@ public class UserTransformer {
                 .build();
     }
 
-    public static UserResponseDto UserToUserResponseDto(User user){
+    public static UserResponseDto userToResponseDto(User savedUser, int i) {
+        if(i==1) {
+            return UserResponseDto.builder()
+                    .name(savedUser.getName())
+                    .message("You registered for Dosify!")
+                    .build();
+        }
         return UserResponseDto.builder()
-                .name(user.getName())
-                .message("Contrats! You have registered on Dosify")
+                .name(savedUser.getName())
+                .gender(savedUser.getGender().toString())
+                .age(savedUser.getAge())
                 .build();
     }
+
 }

@@ -22,9 +22,7 @@ public class AppointmentResponseDto {
 
     DoseNo doseNo;
 
-    CenterResponseDto centerResponseDto;
-
-    String doctorName;
+   DoctorResponseDto doctorResponseDto;
 
     VaccineType vaccineType;
 

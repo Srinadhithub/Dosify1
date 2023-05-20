@@ -13,6 +13,7 @@ import com.example.Dosify.repository.UserRepository;
 import com.example.Dosify.service.AppointmentService;
 import com.example.Dosify.service.Dose1Service;
 import com.example.Dosify.service.Dose2Service;
+import com.example.Dosify.transformer.AppointmentTransformer;
 import com.example.Dosify.transformer.VaccinationCenterTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -73,12 +74,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             user.setDose2(dose2);
         }
 
-        Appointment appointment = Appointment.builder()
-                .appointmentNo(String.valueOf(UUID.randomUUID()))
-                .doseNo(appointmentRequestDto.getDoseNo())
-                .user(user)
-                .doctor(doctor)
-                .build();
+        Appointment appointment= AppointmentTransformer.AppointmentRquestDtoToAppointment(appointmentRequestDto,doctor,user);
 
         user.getAppointments().add(appointment);
         User savedUser = userRepository.save(user); // save dose1/dose2 and appointment
@@ -98,16 +94,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 
         // prepare response dto
-        CenterResponseDto centerResponseDto = VaccinationCenterTransformer.CenterToCenterResponseDto(doctor.getVaccinationCenter());
-
-        return AppointmentResponseDto.builder()
-                .userName(user.getName())
-                .appointmentNo(appointment.getAppointmentNo())
-                .dateOfAppointment(savedAppointment.getDateOfAppointment())
-                .doseNo(appointment.getDoseNo())
-                .centerResponseDto(centerResponseDto)
-                .doctorName(doctor.getName())
-                .vaccineType(appointmentRequestDto.getVaccineType())
-                .build();
+        AppointmentResponseDto appointmentResponseDto= AppointmentTransformer.appointmentToResponseDto(user,savedAppointment,doctor,appointmentRequestDto);
+        return appointmentResponseDto;
     }
 }

@@ -21,7 +21,7 @@ public class Dose2 {
     int id;
 
     String doseId;
-
+    @Enumerated(EnumType.STRING)
     VaccineType vaccineType;
 
     @CreationTimestamp
