@@ -1,17 +1,17 @@
 package com.example.Dosify.model;
 
 import com.example.Dosify.dto.ResponseDTO.AppointmentResponseDto;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import lombok.Builder;
 
 import java.util.List;
 @Builder
+@Entity
 public class Certificate {
-    String name;
-    int age;
-    String mobNo;
-    String emailId;
-
-    boolean is_dose1_taken;
-    boolean isIs_dose2_taken;
-    List<AppointmentResponseDto> AppointemtList;
+    @Id
+  String id;
+    @OneToOne
+    User user;
 }

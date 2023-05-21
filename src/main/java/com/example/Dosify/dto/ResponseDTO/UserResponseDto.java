@@ -11,7 +11,8 @@ import lombok.experimental.FieldDefaults;
 public class UserResponseDto {
 
     String name;
+    int age;
     String gender;
     String message;
-    int age;
+
 }

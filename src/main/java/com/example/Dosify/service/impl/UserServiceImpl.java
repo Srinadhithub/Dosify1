@@ -1,8 +1,7 @@
 package com.example.Dosify.service.impl;
 
 import com.example.Dosify.dto.RequestDTO.UserRequestDto;
-import com.example.Dosify.dto.ResponseDTO.AppointmentResponseDto;
-import com.example.Dosify.dto.ResponseDTO.UserResponseDto;
+import com.example.Dosify.dto.ResponseDTO.*;
 import com.example.Dosify.model.Appointment;
 import com.example.Dosify.model.Certificate;
 import com.example.Dosify.model.User;
@@ -33,7 +32,7 @@ public class UserServiceImpl implements UserService {
         // save the object in db
         User savedUser = userRepository.save(user);
 
-        UserResponseDto userResponseDto = UserTransformer.userToResponseDto(savedUser,1);
+        UserResponseDto userResponseDto = UserTransformer.userToResponseDto(savedUser);
 
         return userResponseDto;
 
@@ -42,7 +41,7 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto getUserByEmailId(String emailId) {
 
         User user=userRepository.findByEmailId(emailId).get();
-       return UserTransformer.userToResponseDto(user,2);
+       return UserTransformer.userToResponseDto(user);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class UserServiceImpl implements UserService {
     public List<UserResponseDto> getNotEvenSingleDose() {
         List<User> userList=userRepository.NotEvenSingleDose();
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
         return users;
     }
 
@@ -66,7 +65,7 @@ public class UserServiceImpl implements UserService {
     public  List<UserResponseDto> getSingleDose() {
         List<User> userList=userRepository.getSingleDose();
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
         return users;
     }
 
@@ -74,7 +73,7 @@ public class UserServiceImpl implements UserService {
     public  List<UserResponseDto> getTwoDoseVaccinated() {
         List<User> userList=userRepository.getTwoDoseVaccinated();
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
         return users;
     }
 
@@ -82,7 +81,7 @@ public class UserServiceImpl implements UserService {
     public  List<UserResponseDto> getNotEvenSingleDoseByGender(String gender) {
         List<User> userList=userRepository.getNotEvenSingleDoseByGender(gender);
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
         return users;
     }
 
@@ -90,7 +89,7 @@ public class UserServiceImpl implements UserService {
     public  List<UserResponseDto> getTwoDoseVaccinatedByGender(String gender) {
         List<User> userList=userRepository.getTwoDoseVaccinatedByGender(gender);
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
         return users;
     }
 
@@ -98,24 +97,35 @@ public class UserServiceImpl implements UserService {
     public  List<UserResponseDto> getSingleDoseByGender(String gender) {
         List<User> userList=userRepository.getSingleDoseByGender(gender);
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
         return users;
     }
 
     @Override
-    public Certificate getCertificate(int userId) {
+    public CertificateResponseDto getCertificate(int userId) {
         User user=userRepository.findById(userId).get();
-        List<Appointment> appointments=appointmentRepository.getByuserId(userId);
-        List<AppointmentResponseDto> appointmentResponseDtos=new ArrayList<>();
-        for(Appointment appointment:appointments) appointmentResponseDtos.add(AppointmentTransformer.appointmentToResponseDto(appointment));
-        return Certificate.builder()
-                .name(user.getName())
-                .age(user.getAge())
-                .emailId(user.getEmailId())
-                .is_dose1_taken(appointments.size()>0)
-                .isIs_dose2_taken(appointments.size()>1)
-                .AppointemtList()
+        Dose1ResponseDto dose1ResponseDto=null;
+        Dose2ResponseDto dose2ResponseDto=null;
+        if(user.isDose1Taken()==true) {
+            AppointmentResponseDto appointmentResponseDto= AppointmentTransformer.appointmentToResponseDto(user,user.getAppointments().get(0),user.getAppointments().get(0).getDoctor(),user.getDose1().getVaccineType());
+            dose1ResponseDto = Dose1ResponseDto.builder()
+                    .doseId(user.getDose1().getDoseId())
+                    .appointmentResponseDto(appointmentResponseDto)
+                    .build();
+        }
+        if(user.isDose2Taken()==true) {
+            AppointmentResponseDto appointmentResponseDto= AppointmentTransformer.appointmentToResponseDto(user,user.getAppointments().get(1),user.getAppointments().get(1).getDoctor(),user.getDose2().getVaccineType());
+            dose2ResponseDto = Dose2ResponseDto.builder()
+                    .doseId(user.getDose2().getDoseId())
+                    .appointmentResponseDto(appointmentResponseDto)
+                    .build();
+        }
+
+        UserResponseDto userResponseDto= UserTransformer.userToResponseDto(user);
+        return CertificateResponseDto.builder()
+                .dose1ResponseDto(dose1ResponseDto)
+                .dose2ResponseDto(dose2ResponseDto)
+                .userResponseDto(userResponseDto)
                 .build();
-        appointments.get(0).getDoctor().
     }
 }

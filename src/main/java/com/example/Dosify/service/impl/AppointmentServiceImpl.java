@@ -1,6 +1,7 @@
 package com.example.Dosify.service.impl;
 
 import com.example.Dosify.Enum.DoseNo;
+import com.example.Dosify.Enum.VaccineType;
 import com.example.Dosify.dto.RequestDTO.AppointmentRequestDto;
 import com.example.Dosify.dto.ResponseDTO.AppointmentResponseDto;
 import com.example.Dosify.dto.ResponseDTO.CenterResponseDto;
@@ -41,7 +42,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Autowired
     private JavaMailSender emailSender;
-
+ Dose1 dose1=null;
+ Dose2 dose2=null;
     @Override
     public AppointmentResponseDto bookAppointment(AppointmentRequestDto appointmentRequestDto) throws UserNotFoundException, DoctorNotFoundException, NotEligibleForDoseException {
 
@@ -59,7 +61,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         Doctor doctor = optionalDoctor.get();
 
         if(appointmentRequestDto.getDoseNo()== DoseNo.DOSE_1){
-            Dose1 dose1 = dose1Service.createDose1(user,appointmentRequestDto.getVaccineType());
+            dose1 = dose1Service.createDose1(user,appointmentRequestDto.getVaccineType());
             user.setDose1Taken(true);
             user.setDose1(dose1);
         }
@@ -69,7 +71,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 throw new NotEligibleForDoseException("Sorry! You are not yet eligible for Dose 2");
             }
 
-            Dose2 dose2 = dose2Service.createDose2(user,appointmentRequestDto.getVaccineType());
+            dose2 = dose2Service.createDose2(user,appointmentRequestDto.getVaccineType());
             user.setDose2Taken(true);
             user.setDose2(dose2);
         }
@@ -92,9 +94,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         message.setText(text);
         emailSender.send(message);
 
-
+        VaccineType vaccineType=dose1==null?dose2.getVaccineType():dose1.getVaccineType();
         // prepare response dto
-        AppointmentResponseDto appointmentResponseDto= AppointmentTransformer.appointmentToResponseDto(user,savedAppointment,doctor,appointmentRequestDto);
+        AppointmentResponseDto appointmentResponseDto= AppointmentTransformer.appointmentToResponseDto(user,savedAppointment,doctor,appointmentRequestDto.getVaccineType());
         return appointmentResponseDto;
     }
 }

@@ -51,4 +51,6 @@ public class User {
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     Dose2 dose2;
+    @OneToOne(mappedBy = "user")
+    Certificate certificate;
 }

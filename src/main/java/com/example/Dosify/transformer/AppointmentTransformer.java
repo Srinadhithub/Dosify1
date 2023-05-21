@@ -1,5 +1,6 @@
 package com.example.Dosify.transformer;
 
+import com.example.Dosify.Enum.VaccineType;
 import com.example.Dosify.dto.RequestDTO.AppointmentRequestDto;
 import com.example.Dosify.dto.ResponseDTO.AppointmentResponseDto;
 import com.example.Dosify.dto.ResponseDTO.CenterResponseDto;
@@ -20,7 +21,7 @@ public class AppointmentTransformer {
                 .build();
     }
 
-    public static AppointmentResponseDto appointmentToResponseDto(User user, Appointment savedAppointment, Doctor doctor, AppointmentRequestDto appointmentRequestDto) {
+    public static AppointmentResponseDto appointmentToResponseDto(User user, Appointment savedAppointment, Doctor doctor, VaccineType vaccineType) {
        DoctorResponseDto doctorResponseDto= DoctorTransformer.DoctorToDoctorResponseDto(doctor);
         return AppointmentResponseDto.builder()
                 .userName(user.getName())
@@ -28,7 +29,7 @@ public class AppointmentTransformer {
                 .dateOfAppointment(savedAppointment.getDateOfAppointment())
                 .doseNo(savedAppointment.getDoseNo())
                 .doctorResponseDto(doctorResponseDto)
-                .vaccineType(appointmentRequestDto.getVaccineType())
+                .vaccineType(vaccineType)
                 .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.Dosify.service;
 
 import com.example.Dosify.dto.RequestDTO.UserRequestDto;
+import com.example.Dosify.dto.ResponseDTO.CertificateResponseDto;
 import com.example.Dosify.dto.ResponseDTO.UserResponseDto;
 import com.example.Dosify.model.Certificate;
 
@@ -25,5 +26,5 @@ public interface UserService {
 
     List<UserResponseDto> getSingleDoseByGender(String gender);
 
-    Certificate getCertificate(int userId);
+    CertificateResponseDto getCertificate(int userId);
 }
