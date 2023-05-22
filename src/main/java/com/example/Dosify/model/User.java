@@ -38,10 +38,10 @@ public class User {
     Gender gender;
 
     @Column(name="is_dose1_taken")
-    boolean isDose1Taken;
+    boolean dose1Taken;
 
     @Column(name="is_dose2_taken")
-    boolean isDose2Taken;
+    boolean dose2Taken;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     List<Appointment> appointments = new ArrayList<>();
@@ -51,6 +51,4 @@ public class User {
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     Dose2 dose2;
-    @OneToOne(mappedBy = "user")
-    Certificate certificate;
 }

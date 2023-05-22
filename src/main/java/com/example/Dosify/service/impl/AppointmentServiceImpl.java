@@ -86,13 +86,20 @@ public class AppointmentServiceImpl implements AppointmentService {
         doctorRepository.save(doctor);
 
         // send email
-        String text = "Congrats!!" + user.getName() + " Your dose "+ appointmentRequestDto.getDoseNo() + " has been booked!!";
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("backendmaydosify@gmail.com");
-        message.setTo(user.getEmailId());
-        message.setSubject("Appointment Booked !!!");
-        message.setText(text);
-        emailSender.send(message);
+        String textUser = "Congrats!!" + user.getName() + " Your dose "+ appointmentRequestDto.getDoseNo() + " has been booked"+appointment.getDateOfAppointment();
+        SimpleMailMessage messageUser = new SimpleMailMessage();
+        messageUser.setFrom("backendmaydosify@gmail.com");
+        messageUser.setTo(user.getEmailId());
+        messageUser.setSubject("Appointment Booked !!!");
+        messageUser.setText(textUser);
+        emailSender.send(messageUser);
+        String textDoctor = "Dear "+ doctor.getName() + " You have an appointment for "+ appointmentRequestDto.getDoseNo() + " vaccine with "+user.getName()+"on"+appointment.getDateOfAppointment();
+        SimpleMailMessage messageDoctor = new SimpleMailMessage();
+        messageDoctor.setFrom("backendmaydosify@gmail.com");
+        messageDoctor.setTo(doctor.getEmailId());
+        messageDoctor.setSubject("Appointment Booked !!!");
+        messageDoctor.setText(textDoctor);
+        emailSender.send(messageDoctor);
 
         VaccineType vaccineType=dose1==null?dose2.getVaccineType():dose1.getVaccineType();
         // prepare response dto

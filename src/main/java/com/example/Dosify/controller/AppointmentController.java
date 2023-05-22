@@ -26,8 +26,4 @@ public class AppointmentController {
 
         return appointmentService.bookAppointment(appointmentRequestDto);
     }
-
-    // generate certificate
-       // -> One dose
-       // -> Both dose
 }

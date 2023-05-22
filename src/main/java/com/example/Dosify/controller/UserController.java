@@ -4,8 +4,6 @@ package com.example.Dosify.controller;
 import com.example.Dosify.dto.RequestDTO.UserRequestDto;
 import com.example.Dosify.dto.ResponseDTO.CertificateResponseDto;
 import com.example.Dosify.dto.ResponseDTO.UserResponseDto;
-import com.example.Dosify.model.Certificate;
-import com.example.Dosify.model.User;
 import com.example.Dosify.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

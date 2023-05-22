@@ -2,19 +2,21 @@ package com.example.Dosify.service.impl;
 
 import com.example.Dosify.dto.RequestDTO.UserRequestDto;
 import com.example.Dosify.dto.ResponseDTO.*;
-import com.example.Dosify.model.Appointment;
-import com.example.Dosify.model.Certificate;
 import com.example.Dosify.model.User;
 import com.example.Dosify.repository.AppointmentRepository;
 import com.example.Dosify.repository.UserRepository;
 import com.example.Dosify.service.UserService;
 import com.example.Dosify.transformer.AppointmentTransformer;
+import com.example.Dosify.transformer.CertificateTransformer;
 import com.example.Dosify.transformer.UserTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -23,6 +25,8 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
 @Autowired
     AppointmentRepository appointmentRepository;
+    @Autowired
+    private JavaMailSender emailSender;
     @Override
     public UserResponseDto addUser(UserRequestDto userRequestDto) {
 
@@ -32,7 +36,7 @@ public class UserServiceImpl implements UserService {
         // save the object in db
         User savedUser = userRepository.save(user);
 
-        UserResponseDto userResponseDto = UserTransformer.userToResponseDto(savedUser);
+        UserResponseDto userResponseDto = UserTransformer.userToResponseDto(savedUser,1);
 
         return userResponseDto;
 
@@ -41,23 +45,27 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto getUserByEmailId(String emailId) {
 
         User user=userRepository.findByEmailId(emailId).get();
-       return UserTransformer.userToResponseDto(user);
+       return UserTransformer.userToResponseDto(user,2);
     }
 
     @Override
     public UserResponseDto updateName(String name, String mobNo) {
-        User user= userRepository.findByMobNo(mobNo).get();
+
+        User user = userRepository.findByMobNo(mobNo).get();
+
         user.setName(name);
         userRepository.save(user);
 
-        return UserResponseDto.builder().message("updated !!").build();
+        UserResponseDto userResponseDto = UserTransformer.userToResponseDto(user, 2);
+        userResponseDto.setMessage("updated");
+        return userResponseDto;
     }
 
     @Override
     public List<UserResponseDto> getNotEvenSingleDose() {
         List<User> userList=userRepository.NotEvenSingleDose();
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
         return users;
     }
 
@@ -65,7 +73,7 @@ public class UserServiceImpl implements UserService {
     public  List<UserResponseDto> getSingleDose() {
         List<User> userList=userRepository.getSingleDose();
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
         return users;
     }
 
@@ -73,7 +81,7 @@ public class UserServiceImpl implements UserService {
     public  List<UserResponseDto> getTwoDoseVaccinated() {
         List<User> userList=userRepository.getTwoDoseVaccinated();
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
         return users;
     }
 
@@ -81,7 +89,7 @@ public class UserServiceImpl implements UserService {
     public  List<UserResponseDto> getNotEvenSingleDoseByGender(String gender) {
         List<User> userList=userRepository.getNotEvenSingleDoseByGender(gender);
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
         return users;
     }
 
@@ -89,7 +97,7 @@ public class UserServiceImpl implements UserService {
     public  List<UserResponseDto> getTwoDoseVaccinatedByGender(String gender) {
         List<User> userList=userRepository.getTwoDoseVaccinatedByGender(gender);
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
         return users;
     }
 
@@ -97,35 +105,21 @@ public class UserServiceImpl implements UserService {
     public  List<UserResponseDto> getSingleDoseByGender(String gender) {
         List<User> userList=userRepository.getSingleDoseByGender(gender);
         List<UserResponseDto> users=new ArrayList<>();
-        for (User user:userList) users.add(UserTransformer.userToResponseDto(user));
+        for (User user:userList) users.add(UserTransformer.userToResponseDto(user,2));
         return users;
     }
 
     @Override
     public CertificateResponseDto getCertificate(int userId) {
         User user=userRepository.findById(userId).get();
-        Dose1ResponseDto dose1ResponseDto=null;
-        Dose2ResponseDto dose2ResponseDto=null;
-        if(user.isDose1Taken()==true) {
-            AppointmentResponseDto appointmentResponseDto= AppointmentTransformer.appointmentToResponseDto(user,user.getAppointments().get(0),user.getAppointments().get(0).getDoctor(),user.getDose1().getVaccineType());
-            dose1ResponseDto = Dose1ResponseDto.builder()
-                    .doseId(user.getDose1().getDoseId())
-                    .appointmentResponseDto(appointmentResponseDto)
-                    .build();
-        }
-        if(user.isDose2Taken()==true) {
-            AppointmentResponseDto appointmentResponseDto= AppointmentTransformer.appointmentToResponseDto(user,user.getAppointments().get(1),user.getAppointments().get(1).getDoctor(),user.getDose2().getVaccineType());
-            dose2ResponseDto = Dose2ResponseDto.builder()
-                    .doseId(user.getDose2().getDoseId())
-                    .appointmentResponseDto(appointmentResponseDto)
-                    .build();
-        }
-
-        UserResponseDto userResponseDto= UserTransformer.userToResponseDto(user);
-        return CertificateResponseDto.builder()
-                .dose1ResponseDto(dose1ResponseDto)
-                .dose2ResponseDto(dose2ResponseDto)
-                .userResponseDto(userResponseDto)
-                .build();
+        CertificateResponseDto certificateResponseDto=CertificateTransformer.getCertificate(user);
+        String textUser = certificateResponseDto.toString();
+        SimpleMailMessage messageUser = new SimpleMailMessage();
+        messageUser.setFrom("backendmaydosify@gmail.com");
+        messageUser.setTo(user.getEmailId());
+        messageUser.setSubject("Certificate from DOSIFY !!!");
+        messageUser.setText(textUser);
+        emailSender.send(messageUser);
+        return certificateResponseDto;
     }
 }
