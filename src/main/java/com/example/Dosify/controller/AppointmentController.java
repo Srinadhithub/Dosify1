@@ -26,4 +26,6 @@ public class AppointmentController {
 
         return appointmentService.bookAppointment(appointmentRequestDto);
     }
+    //cancel appointment
+    //update
 }

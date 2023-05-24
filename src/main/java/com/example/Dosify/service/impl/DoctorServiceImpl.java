@@ -1,5 +1,6 @@
 package com.example.Dosify.service.impl;
 
+import com.example.Dosify.Enum.Gender;
 import com.example.Dosify.dto.RequestDTO.DoctorRequestDto;
 import com.example.Dosify.dto.ResponseDTO.CenterResponseDto;
 import com.example.Dosify.dto.ResponseDTO.DoctorResponseDto;
@@ -65,8 +66,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<DoctorResponseDto> getAllDoctorsbygenderandAge(String gender, int age) {
-        List<Doctor> doctorList=doctorRepository.getAllDoctorsbygenderandAge(gender,age);
+    public List<DoctorResponseDto> getAllDoctorsbygenderandAge(Gender gender, int age) {
+        List<Doctor> doctorList=doctorRepository.findByGenderAndAge(gender,age);
         List<DoctorResponseDto> filteredList=new ArrayList<>();
         for(Doctor doctor:doctorList){
                 filteredList.add(DoctorTransformer.DoctorToDoctorResponseDto(doctor));
@@ -77,8 +78,8 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public double getRatioOfMaletoFemale() {
-        List<Doctor> doctorMaleList=doctorRepository.findByGender("male");
-        List<Doctor> doctorFeMaleList=doctorRepository.findByGender("female");
+        List<Doctor> doctorMaleList=doctorRepository.findByGender(Gender.MALE);
+        List<Doctor> doctorFeMaleList=doctorRepository.findByGender(Gender.FEMALE);
         return doctorMaleList.size()/doctorFeMaleList.size();
     }
 

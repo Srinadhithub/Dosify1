@@ -1,5 +1,6 @@
 package com.example.Dosify.controller;
 
+import com.example.Dosify.Enum.Gender;
 import com.example.Dosify.dto.RequestDTO.DoctorRequestDto;
 import com.example.Dosify.dto.ResponseDTO.DoctorResponseDto;
 import com.example.Dosify.exception.CenterNotPresentException;
@@ -38,7 +39,7 @@ public class DoctorController {
 
 //     get all the male doctors whose age is above 40
     @GetMapping("/getalldoctorsbygiven_gender_and_age")
-    public ResponseEntity getAllDoctorsbygenderandAge(@RequestParam String gender,@RequestParam int age){
+    public ResponseEntity getAllDoctorsbygenderandAge(@RequestParam Gender gender, @RequestParam int age){
         List<DoctorResponseDto> doctorList=doctorService.getAllDoctorsbygenderandAge(gender,age);
         return new ResponseEntity(doctorList,HttpStatus.FOUND);
     }

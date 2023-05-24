@@ -1,5 +1,6 @@
 package com.example.Dosify.service;
 
+import com.example.Dosify.Enum.Gender;
 import com.example.Dosify.dto.RequestDTO.DoctorRequestDto;
 import com.example.Dosify.dto.ResponseDTO.DoctorResponseDto;
 import com.example.Dosify.exception.CenterNotPresentException;
@@ -13,7 +14,7 @@ public interface DoctorService {
 
     List<DoctorResponseDto> getAllDoctorsAtleastAppointments(int count);
 
-    List<DoctorResponseDto> getAllDoctorsbygenderandAge(String gender, int age);
+    List<DoctorResponseDto> getAllDoctorsbygenderandAge(Gender gender, int age);
 
     double getRatioOfMaletoFemale();
 
