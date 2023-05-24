@@ -22,4 +22,6 @@ public interface DoctorRepository extends JpaRepository<Doctor,Integer> {
     List<Doctor> findByGender(Gender gender);
 
     Optional<Doctor> findByEmailId(String emailId);
+    @Query(value = "select*from Doctor where gender=:gender and vaccination_center_id=:id",nativeQuery = true)
+    List<Doctor> findByGenderAndCenter(String gender, int id);
 }

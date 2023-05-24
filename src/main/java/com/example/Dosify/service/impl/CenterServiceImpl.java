@@ -64,4 +64,19 @@ public class CenterServiceImpl implements VaccinationCenterService {
         }
         return filteredList;
     }
+
+    @Override
+    public List<DoctorResponseDto> getAllDoctorsbyGender(String gender, int id) {
+        List<Doctor> doctorList=doctorRepository.findByGenderAndCenter(gender,id);
+        List<DoctorResponseDto> filteredList=new ArrayList<>();
+        for(Doctor doctor:doctorList){
+            filteredList.add(DoctorTransformer.DoctorToDoctorResponseDto(doctor));
+        }
+        return filteredList;
+    }
+
+    @Override
+    public void deleteById(int id) {
+        centerRepository.deleteById(id);
+    }
 }

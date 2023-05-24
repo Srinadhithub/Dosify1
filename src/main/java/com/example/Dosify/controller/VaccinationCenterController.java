@@ -34,9 +34,11 @@ public class VaccinationCenterController {
         List<DoctorResponseDto> doctorResponseDtoList=vaccinationCenterService.getDoctorsFromCenterId(id);
         return new ResponseEntity(doctorResponseDtoList,HttpStatus.FOUND);
     }
-    // give the list of all male doctors at a particular center(centerId)
-
-    // give the list of all females doctors at a particular center(centerId)
+    @GetMapping("/getalldoctorsbygiven_gender/center/")
+    public ResponseEntity getAllDoctorsbygenderandAge(@RequestParam String gender,@RequestParam int id){
+        List<DoctorResponseDto> doctorList=vaccinationCenterService.getAllDoctorsbyGender(gender,id);
+        return new ResponseEntity(doctorList,HttpStatus.FOUND);
+    }
 
     // give the list of all male doctors above age 40 at a particular center(centerId)
     @GetMapping("/getalldoctorsbygiven_gender_and_age/center/{id}")
@@ -48,6 +50,11 @@ public class VaccinationCenterController {
       @GetMapping("/getcentersbycentertype/{centerType}")
     public ResponseEntity getCentersByCenterType(@PathVariable CenterType centerType){
         return new ResponseEntity(vaccinationCenterService.getCentersByCenterType(centerType),HttpStatus.FOUND);
+      }
+      @DeleteMapping("/deletebyid")
+    public ResponseEntity deleteById(@RequestParam int id){
+        vaccinationCenterService.deleteById(id);
+        return new ResponseEntity(HttpStatus.OK);
       }
 
 }

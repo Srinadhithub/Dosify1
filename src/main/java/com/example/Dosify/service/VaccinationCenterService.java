@@ -19,4 +19,8 @@ public interface VaccinationCenterService {
     List<CenterResponseDto> getCentersByCenterType(CenterType centerType);
 
     List<DoctorResponseDto> getAllDoctorsbygenderandAgeCenter( String gender, int age, int id);
+
+    List<DoctorResponseDto> getAllDoctorsbyGender(String gender, int id);
+
+    void deleteById(int id);
 }
